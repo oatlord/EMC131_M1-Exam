@@ -22,13 +22,23 @@ class Level2 extends Phaser.Scene {
         this.add.image(400, 300, 'sky');
 
         this.platforms = this.physics.add.staticGroup();
+
         this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-        this.platforms.create(600, 400, 'ground');
-        this.platforms.create(50, 250, 'ground');
-        this.platforms.create(750, 220, 'ground');
+
+        this.platforms.create(300, 400, 'ground');
+        this.platforms.create(60, 200, 'ground');
+        this.platforms.create(750, 300, 'ground');
 
         createInitialAssets(this);
         createInteractables(this);
+
+        this.bombs = this.physics.add.group();
+        this.time.addEvent({
+            delay: 1000,
+            callback: createBomb,
+            callbackScope: this,
+            repeat: 4
+        });
 
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 

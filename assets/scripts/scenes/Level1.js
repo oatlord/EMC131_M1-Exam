@@ -14,8 +14,8 @@ class Level1 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('sky', 'assets/images/sky.png');
-        this.load.image('ground', 'assets/images/platform.png');
+        this.load.image('sky', 'assets/images/level1/sky.png');
+        this.load.image('ground', 'assets/images/level1/platform.png');
         this.load.image('star', 'assets/images/star.png');
         this.load.image('bomb', 'assets/images/bomb.png');
         this.load.spritesheet('dude', 'assets/images/dude.png', { frameWidth: 32, frameHeight: 48 });
@@ -25,13 +25,23 @@ class Level1 extends Phaser.Scene {
         this.add.image(400, 300, 'sky');
 
         this.platforms = this.physics.add.staticGroup();
+
         this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-        this.platforms.create(600, 400, 'ground');
-        this.platforms.create(50, 250, 'ground');
-        this.platforms.create(750, 220, 'ground');
+
+        this.platforms.create(300, 400, 'ground');
+        this.platforms.create(60, 200, 'ground');
+        this.platforms.create(750, 300, 'ground');
 
         createInitialAssets(this);
         createInteractables(this);
+
+        this.bombs = this.physics.add.group();
+        this.time.addEvent({
+            delay: 1000,
+            callback: createBomb,
+            callbackScope: this,
+            repeat: 4
+        });
 
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
@@ -59,28 +69,6 @@ class Level1 extends Phaser.Scene {
         }
 
         switchLevel.call(this, 'Level2');
-    }
-}
-
-function collectStar(player, star) {
-    star.disableBody(true, true);
-    this.score += 10;
-    this.scoreText.setText('Score: ' + this.score);
-
-    if (this.stars.countActive(true) === 0) {
-        this.stars.children.iterate((child) => {
-            child.enableBody(true, child.x, 0, true, true);
-        });
-
-        const x = (player.x < 400)
-            ? Phaser.Math.Between(400, 800)
-            : Phaser.Math.Between(0, 400);
-
-        const bomb = this.bombs.create(x, 16, 'bomb');
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-        bomb.allowGravity = false;
     }
 }
 
@@ -129,8 +117,6 @@ function createInteractables(scene) {
     scene.stars.children.iterate((child) => {
         child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
     });
-
-    scene.bombs = scene.physics.add.group();
 }
 
 function createColliders(scene) {
@@ -140,6 +126,30 @@ function createColliders(scene) {
 
     scene.physics.add.overlap(player, scene.stars, collectStar, null, scene);
     scene.physics.add.collider(player, scene.bombs, hitBomb, null, scene);
+}
+
+function createBomb() {
+    const x = (player.x < 400)
+        ? Phaser.Math.Between(400, 800)
+        : Phaser.Math.Between(0, 400);
+
+    const bomb = this.bombs.create(x, 16, 'bomb');
+    bomb.setBounce(1);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    bomb.allowGravity = false;
+}
+
+function collectStar(player, star) {
+    star.disableBody(true, true);
+    this.score += 10;
+    this.scoreText.setText('Score: ' + this.score);
+
+    if (this.stars.countActive(true) === 0) {
+        this.stars.children.iterate((child) => {
+            child.enableBody(true, child.x, 0, true, true);
+        });
+    }
 }
 
 function hitBomb(player, bomb) {
