@@ -11,25 +11,32 @@ class Level1 extends Phaser.Scene {
         this.bombs = null;
         this.stars = null;
         this.scoreText = null;
+        this.music = null;
+        this.textStyle = { fontFamily: "Upheaval", fontSize: '32px', fill: '#000' };
     }
 
     preload() {
-        this.load.image('sky', 'assets/images/level1/sky.png');
+        this.load.image('sky', 'assets/images/level1/windows xp background.png');
         this.load.image('ground', 'assets/images/level1/platform.png');
         this.load.image('star', 'assets/images/star.png');
         this.load.image('bomb', 'assets/images/bomb.png');
         this.load.spritesheet('dude', 'assets/images/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.audio('bgm1', 'assets/audio/Life is Full of Joy.wav');
     }
 
     create() {
-        this.add.image(400, 300, 'sky');
+        this.music = this.sound.add('bgm1');
+        this.music.setLoop(true);
+        this.music.play();
+
+        this.add.image(400, 300, 'sky').setScale(3);
 
         this.platforms = this.physics.add.staticGroup();
 
         this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
         this.platforms.create(300, 400, 'ground');
-        this.platforms.create(60, 200, 'ground');
+        this.platforms.create(70, 200, 'ground');
         this.platforms.create(750, 300, 'ground');
 
         createInitialAssets(this);
@@ -43,7 +50,7 @@ class Level1 extends Phaser.Scene {
             repeat: 4
         });
 
-        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        this.scoreText = this.add.text(16, 16, 'Score: 0', this.textStyle);
 
         createColliders(this);
     }
@@ -144,24 +151,25 @@ function collectStar(player, star) {
     star.disableBody(true, true);
     this.score += 10;
     this.scoreText.setText('Score: ' + this.score);
-
-    if (this.stars.countActive(true) === 0) {
-        this.stars.children.iterate((child) => {
-            child.enableBody(true, child.x, 0, true, true);
-        });
-    }
 }
 
 function hitBomb(player, bomb) {
     this.physics.pause();
+
     player.setTint(0xff0000);
     player.anims.play('turn');
+
+    this.music.stop();
+    this.scene.stop();
+    this.scene.start("GameOver");
     gameOver = true;
 }
 
 function switchLevel(scene) {
-    if (this.score === 50) {
+    if (this.stars.countActive(true) === 10) {
+        this.physics.pause();
+        this.music.stop();
+        this.scene.stop();
         this.scene.start(scene);
-        console.log(scene + " loaded");
     }
 }

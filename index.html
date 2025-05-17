@@ -4,15 +4,25 @@
     <meta charset="UTF-8" />
     <title>Making your first Phaser 3 Game - Part 10</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <script src="assets/scripts/scenes/MainMenu.js"></script>
     <script src="assets/scripts/scenes/Level1.js"></script>
     <script src="assets/scripts/scenes/Level2.js"></script>
+    <script src="assets/scripts/scenes/Level3.js"></script>
+    <script src="assets/scripts/scenes/CongratsScene.js"></script>
+    <script src="assets/scripts/scenes/GameOver.js"></script>
     <script src="assets/scripts/main.js"></script>
 
     <style type="text/css">
         body {
             margin: 0;
         }
+        @font-face {
+            font-family: 'Upheaval';
+            src: url("assets/fonts/Upheaval/upheavtt.ttf");
+        }
     </style>
 </head>
-<body></body>
+<body>
+    <div style="font-family: 'Upheaval'; position: absolute; left: -1000px; visibility: hidden;">LoadingFont</div>
+</body>
 </html>
