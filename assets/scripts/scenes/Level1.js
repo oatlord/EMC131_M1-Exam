@@ -166,7 +166,7 @@ function hitBomb(player, bomb) {
 }
 
 function switchLevel(scene) {
-    if (this.stars.countActive(true) === 10) {
+    if (this.stars.countActive(true) === 0) {
         this.physics.pause();
         this.music.stop();
         this.scene.stop();
